@@ -13,7 +13,8 @@
     compile_proc(/datum/base/proc/unbalanced_if)
     compile_proc(/proc/moves_arg)
     compile_proc(/proc/excess_args)
-    CHECK_INSTALL_COMPILED // RES: /receive_datum, /access_datum, /pass_datum, /store_restore_datum, /deopt_ret, /deopt_arg, /datum/base/deopt_src, /datum/base/call_nested, /datum/base/two_arg, /datum/base/unbalanced_if, /moves_arg, /excess_args
+    compile_proc(/proc/unbalanced_dup)
+    CHECK_INSTALL_COMPILED // RES: /receive_datum, /access_datum, /pass_datum, /store_restore_datum, /deopt_ret, /deopt_arg, /datum/base/deopt_src, /datum/base/call_nested, /datum/base/two_arg, /datum/base/unbalanced_if, /moves_arg, /excess_args, /unbalanced_dup
 
     var/datum/base/dt_local = new
     var/datum/base/dt_local_two = new
@@ -68,6 +69,8 @@
     excess_args(dt_local, dt_local_two)
     RES_CHECK_LEAK(dt_local) // RES: OK
     RES_CHECK_LEAK(dt_local_two) // RES: OK
+
+    unbalanced_dup(dt_local)
 
 /datum/base
     var/dt_next = null
@@ -137,3 +140,14 @@
 
 /proc/excess_args(a)
     return a
+
+/proc/unbalanced_dup_new()
+    return new /datum/base
+/proc/unbalanced_dup_res(r)
+    RES(r)
+
+/proc/unbalanced_dup()
+    var/a = unbalanced_dup_new()
+    var/b = a
+    a = null
+    unbalanced_dup_res(dmjit_get_ref_count(b))

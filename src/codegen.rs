@@ -774,7 +774,7 @@ impl<'ctx> CodeGen<'ctx, '_> {
                 let meta_value = self.emit_load_meta_value(value);
                 let mut jumps = Vec::new();
                 let mut default = Option::None;
-                for (predicate, block) in cases.as_ref() {
+                for (predicate, block) in cases {
                     let mut predicates = Vec::new();
                     fn to_linear(predicate: &ValueTagPredicate, out: &mut Vec<ValueTagPredicate>) {
                         match predicate {

@@ -38,6 +38,8 @@ macro_rules! ref_identity {
     };
 }
 
+pub(crate) use ref_identity;
+
 ref_identity!(RValue<'_>);
 
 /// Denotes value drains
@@ -326,7 +328,7 @@ impl<'t> Analyzer<'t> {
                 );
             }
             DMIR::ValueTagSwitch(_, cases) => {
-                for (_, block) in cases.as_ref() {
+                for (_, block) in cases {
                     Analyzer::merge_block(
                         &self.stack,
                         &self.cache,

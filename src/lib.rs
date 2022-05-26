@@ -26,6 +26,9 @@ mod test_utils;
 pub(crate) mod stack_map;
 mod section_memory_manager_bindings;
 pub(crate) mod proc_meta;
+pub(crate) mod dfa;
+pub(crate) mod cfa;
+pub(crate) mod ref_count2;
 
 
 #[macro_use]

@@ -22,7 +22,7 @@ pub enum DMIR {
     GetCacheField(u32),
     SetCacheField(u32),
     PushCache,
-    ValueTagSwitch(ValueLocation, Box<Vec<(ValueTagPredicate, String)>>),
+    ValueTagSwitch(ValueLocation, Vec<(ValueTagPredicate, String)>),
     FloatAdd,
     FloatSub,
     FloatMul,
@@ -243,11 +243,14 @@ fn build_float_bin_op_deopt(action: DMIR, data: &DebugData, proc: &Proc, out: &m
 fn decode_switch(value: ValueLocation, switch_id: &mut u32, cases: Vec<(ValueTagPredicate, Vec<DMIR>)>, out: &mut Vec<DMIR>) {
     let switch_exit = format!("switch_{}_exit", switch_id);
     let (predicates, blocks): (Vec<_>, Vec<_>) = cases.into_iter().unzip();
-    out.push(DMIR::ValueTagSwitch(value, Box::new(
-        predicates.into_iter().enumerate().map(
-            |(index, predicate)| (predicate, format!("switch_{}_case_{}", switch_id, index))
-        ).collect()
-    )));
+    out.push(
+        DMIR::ValueTagSwitch(
+            value,
+            predicates.into_iter().enumerate().map(
+                |(index, predicate)| (predicate, format!("switch_{}_case_{}", switch_id, index))
+            ).collect()
+        )
+    );
     let mut case_counter = 0;
     for mut instructions in blocks {
         out.push(EnterBlock(format!("switch_{}_case_{}", switch_id, case_counter)));

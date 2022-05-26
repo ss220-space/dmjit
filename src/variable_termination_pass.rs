@@ -363,7 +363,7 @@ impl <'t> AnalyzerState<'t> {
                     block_ended = true;
                 }
                 DMIR::ValueTagSwitch(_, cases) =>{
-                    for (_, block) in cases.as_ref() {
+                    for (_, block) in cases {
                         self.merge_presences(pos, block.clone());
                     }
                     block_ended = true;

@@ -21,8 +21,10 @@ use llvm_sys::execution_engine::LLVMExecutionEngineGetErrMsg;
 
 use crate::{ByondProcFunc, chad_hook_by_id, DisassembleEnv, dmir, guard, pads};
 use crate::codegen::CodeGen;
+use crate::dfa::analyze_and_dump_dfa;
 use crate::dmir::DMIR;
 use crate::proc_meta::{ProcMeta, ProcMetaModuleBuilder};
+use crate::ref_count2::generate_ref_count_operations2;
 use crate::ref_count::generate_ref_count_operations;
 use crate::section_memory_manager_bindings::{Section, SectionMemoryManager};
 use crate::stack_map::{read_stack_map, StackMap};
@@ -251,6 +253,9 @@ fn compile_proc<'ctx>(
     log::debug!("DMIR created");
     variable_termination_pass(&mut irs);
     log::debug!("variable_termination_pass done");
+
+    generate_ref_count_operations2(&mut irs, proc.parameter_names().len());
+    log::debug!("====== DFA done ======");
     generate_ref_count_operations(&mut irs, proc.parameter_names().len());
     log::debug!("ref_count_pass done");
 
